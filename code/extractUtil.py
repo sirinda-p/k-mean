@@ -26,10 +26,10 @@ def checkFile(datapath, original_filename, max_num_att ):
 		
 		## Check if each line contains more than max_num_att, the maximum number of features
 		if len(arr) > max_num_att:
-			rewrite = True 
+			rewrite = True ## If yes, exclude the extra feature and rewrite the file
 			break
 			
-	## If yes, exclude the extra feature and rewrite the file
+	## If there are extra (and unnecessary) attributes, exclude them and rewrite the file
 	if rewrite:
 		lno =0 
 		f_w = open(datapath+new_filename, "w")
@@ -62,7 +62,7 @@ def checkFile(datapath, original_filename, max_num_att ):
 	
 	return  new_filename
 
-## Check format of features that are in three-dotted number
+## Check format of features that are in three-dotted number and change the format by removing dots
 def threedotnumber(dotted_number, need2num=False):
 	
 	##Split the value by dot 
@@ -72,8 +72,7 @@ def threedotnumber(dotted_number, need2num=False):
 	if len(dotted_number ) == 2: #1.3 
 		number = dotted_number[0]+dotted_number[1]+"0"
 		
-	
-	elif len(dotted_number ) == 3:
+ 	elif len(dotted_number ) == 3:
 		if need2num and int(dotted_number[2])<10:
 			number = dotted_number[0]+dotted_number[1]+dotted_number[2]+"0"
 		else:
@@ -93,9 +92,11 @@ def transformFeature(datapath, checked_fname):
 	transformed_fname = checked_fname.replace("checked", "transformed_continent")
 	f_w = open(datapath+transformed_fname, "w")
 	
+	
+	## Note to self: steps to process data 
 	## Transform  original features 
 	## Normalize features
-	## Feature selection 
+	## Select features
 	 
 	att_name = ["ID", "AllowPush","AdOptedIn","NumCampaignMatch","Carrier","AppVersion","StartDate","AllowiBeacon",
 	"AllowGeo","AllowFeaturePush","ScreenHeight","AllowBT","HaveUniqueGlobalID","NumCrash","DailyUsage","IP","LastUpdateDate",
@@ -136,6 +137,7 @@ def transformFeature(datapath, checked_fname):
 	myhash = dict()
 	new_att_name_arr.append("ID")
 	countline = 0
+	
 	for line in f_r.readlines():
 		arr = line.strip().split(",") 
 		norm_arr = []
@@ -146,6 +148,8 @@ def transformFeature(datapath, checked_fname):
  		countline += 1
  		print countline
  		while i<len(arr):
+			
+			## IP -> country 
 			if att_name[i] == "IP":
 				try:
 					rec = gi.record_by_addr(arr[i])
@@ -156,6 +160,8 @@ def transformFeature(datapath, checked_fname):
 				norm_arr.append(str(country).replace(",","-"))
 				
 				if firstLine: new_att_name_arr.append("continent'")
+				
+			## true->1, false->0
   			elif  att_name[i] in  boolean_arr_list:
 				#print att_name[i]
 				if arr[i].lower()=="true":
@@ -176,7 +182,7 @@ def transformFeature(datapath, checked_fname):
 				if firstLine: new_att_name_arr.append( att_name[i])
 			
  			elif att_name[i] in string_arr_list :
-				#Change category to integer
+				#If string is unreadable, change it to ascii string by appending its hash value to "non-ascii" 
  				if not isEnglish(arr[i][0]) or arr[i][0] == "\\":
 					hashval = hash(arr[i])
 					#print arr[i][0] 
@@ -188,7 +194,8 @@ def transformFeature(datapath, checked_fname):
 						ascii = myhash[hashval]
  					norm_arr.append("non-ascii"+str(ascii))
 					#print arr[i]+"-> non-ascii"+str(ascii)
- 
+					
+				## If string, do nothing
 				else:
 					norm_arr.append(arr[i]) 
  				
@@ -196,7 +203,7 @@ def transformFeature(datapath, checked_fname):
  			
  			elif  att_name[i] in datetime_arr_list : # [ "StartDate", "LastUpdateDate","BlockPush","RevokePush","Uninstalled"]
 				
-				## Will not keep this attribute
+				## Will not keep this attribute, but will use it to create other attributes
 				if att_name[i] == "StartDate": #'2015-10-31 08:17:03' or 2015-09-29 22:58:51.013352
  					if len( arr[i].split("."))>1: # 2015-09-29 22:58:51.013352
 						start_date = datetime.datetime.strptime(arr[i], '%Y-%m-%d %H:%M:%S.%f')
@@ -211,6 +218,7 @@ def transformFeature(datapath, checked_fname):
 					else:
 						lastdate = datetime.datetime.strptime(arr[i], '%Y-%m-%d %H:%M:%S')
 					
+					## Calculate #last update days
 					norm_arr.append((lastdate - start_date).days) 
 					#print att_name[i]+":"+	str(lastdate)  
 					if firstLine: new_att_name_arr.append( "LastUpdateDays")
@@ -300,8 +308,7 @@ def transformFeature(datapath, checked_fname):
 						new_att_name_arr.append(att_name[i]+"After"  )
 					
 			
-  			## ["AppVersion","IP","OSVersion","Timezone","sdk"]
-			elif att_name[i] == "AppVersion": #client_version '1.0.7 (1.2.56)'
+ 			elif att_name[i] == "AppVersion": #client_version '1.0.7 (1.2.56)'
 				num_arr = arr[i].split("(")
 				
 				## split number by dot and return a whole integer number
@@ -341,4 +348,5 @@ def transformFeature(datapath, checked_fname):
 	
 	f_r.close()
 	f_w.close()
+ 
  

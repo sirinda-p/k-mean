@@ -11,7 +11,7 @@ from sklearn import metrics
 from numpy.random import random
 
 def kmean_bestK(data, minK, maxK):
- 
+  
 	## perform k-mean and select the best k
 	maxsilh = float('-inf')
 	centroid_best = []
@@ -21,11 +21,13 @@ def kmean_bestK(data, minK, maxK):
 		
 		clusterer = skcluster.KMeans(n_clusters=ncluster)
 		clusterer.fit(data)
+		## Get a cluster label for each data point
 		cluster_labels = clusterer.fit_predict(data)
-		print cluster_labels
-		# The silhouette_score gives the average value for all the samples.
-		# This gives a perspective into the density and separation of the formed clusters
+ 		## The silhouette_score gives the average value for all the samples.
+		## This gives a perspective into the density and separation of the formed clusters
 		silhouette_avg = silhouette_score(data, cluster_labels)
+   		
+   		## Select clustering result that has highest silhouette_avg
    		if silhouette_avg> maxsilh:
 			maxsilh = silhouette_avg
 			centroid_best = clusterer.cluster_centers_
@@ -131,11 +133,12 @@ def affinity(data):
 	for  damping in np.arange(0.5,1,0.1):
 		clusterer = skcluster.AffinityPropagation(damping = damping, affinity='euclidean')
 		clusterer.fit(data)
+		## Get a cluster label for each data point
 		cluster_labels = clusterer.fit_predict(data)
 		silhouette_avg = silhouette_score(data, cluster_labels) 
  
  		ncluster =  len(clusterer.cluster_centers_indices_)
-  		
+  		## Select clustering result that has highest silhouette_avg
  		if silhouette_avg> maxsilh:
 			maxsilh = silhouette_avg
 			centroid_best = clusterer.cluster_centers_ 
@@ -144,30 +147,19 @@ def affinity(data):
 	return centroid_best, kbest
 
 def birch(data):
-	'''
-	for branching_factor in np.arange(50,60,10):
-		print "\nBranch factor = "+str(branching_factor)
-		clusterer = skcluster.Birch(branching_factor=branching_factor, n_clusters=None, threshold=0.5, compute_labels=True)
-		clusterer.fit(data)
-		clusterer.fit_predict(data)
-		cluster_labels = clusterer.fit_predict(data)
-		silhouette_avg = silhouette_score(data, cluster_labels) 
-		print "Default cluster"
- 		print (len(set(cluster_labels)), silhouette_avg)
-
-		for ncluster in np.arange(3,4,1):
-		'''	
+ 
 	maxsilh = float('-inf')
 	centroid_best = []
  	
 	for ncluster in range(3,11):
 		clusterer = skcluster.Birch(n_clusters=ncluster,  compute_labels=True)
 		clusterer.fit(data)
-		clusterer.fit_predict(data)
+		#clusterer.fit_predict(data)
+		## Get a cluster label for each data point
 		cluster_labels = clusterer.fit_predict(data)
 		silhouette_avg = silhouette_score(data, cluster_labels) 
 		
-		
+		## Select clustering result that has highest silhouette_avg
  		if silhouette_avg> maxsilh:
 			maxsilh = silhouette_avg
  			kbest = ncluster
@@ -194,8 +186,7 @@ def birch(data):
 
 def cobweb(data, attname_arr,integer_arr_list, norm_data):
 	
- 	#shuffle(irises)
-	maxsilh = float('-inf')
+ 	maxsilh = float('-inf')
 	centroid_best = []
 
 	tree = Cobweb3Tree()
@@ -212,21 +203,16 @@ def cobweb(data, attname_arr,integer_arr_list, norm_data):
 				datadict[att_name] =  att_val 
 		cobweb_data.append(datadict)
 		if first:
-			#print cobweb_data	
-			first = False
-	#cobweb_data = [{a: iris[a] for a in iris } for row in data]
-	
+ 			first = False
+ 	
 	tree.fit(cobweb_data)
 	
-	#print len( cobweb_data)
-	print "nodes in tree"
-	pprint(tree.root.output_json())
+ 	print "nodes in tree"
+	print(tree.root.output_json())
 	print ""
 	for k in range(2,11):
-		#cobweb_labels = [ c for c in cluster.k_cluster(tree, cobweb_data, k)[0]]
-		
-		 
-		cluster_labels = np.array([ c for c in cluster.k_cluster(tree, cobweb_data, k=k)],)
+ 		
+ 		cluster_labels = np.array([ c for c in cluster.k_cluster(tree, cobweb_data, k=k)],)
 		print set(cluster_labels)
 		try:
 			silhouette_avg = silhouette_score(norm_data, cluster_labels) 

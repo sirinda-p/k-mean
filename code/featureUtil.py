@@ -164,6 +164,7 @@ def normalize(att_value_hash, boolean_arr_list, integer_arr_list, ignore_arr_lis
 	
 	newname_arr = [] 
  	norm_value_hash = dict()
+ 	
 	## keep original boolean att
 	for att_name in  boolean_arr_list:
 		if att_name in ignore_arr_list: continue
@@ -171,35 +172,29 @@ def normalize(att_value_hash, boolean_arr_list, integer_arr_list, ignore_arr_lis
 			norm_value_hash[att_name] = np.array([att_value_hash[att_name]])
 			newname_arr.append(att_name)
 		
-	## normalize interger attributes 
-	
+	## normalize interger attributes: convert to [0,1] using min_max scaler 
 	minmax_hash = dict()
 	for att_name in integer_arr_list:
 		if att_name in ignore_arr_list: continue
 		if att_name in select_features:
 			val_arr = np.array([[float(val.strip()) for val in att_value_hash[att_name]]]).transpose()
-			#print val_arr.transpose()
-			#print len(val_arr[0])
-			#min_max_scaler.fit(val_arr )	
-			minmax_hash[att_name] = (min(val_arr), max(val_arr))
+ 			minmax_hash[att_name] = (min(val_arr), max(val_arr))
 			
 			norm_val_arr = min_max_scaler.fit_transform(val_arr )	
 			norm_value_hash[att_name] = norm_val_arr.transpose()
 			newname_arr.append(att_name)
 
-	## 1-to-k encode categorical data 
+	## normalize categorical features: 1-to-k encode categorical data 
 	newcatname_arr = []
 	for att_name in   category_arr_list:
 		if att_name in ignore_arr_list: continue
 		if att_name in select_features:
 			val_arr = np.array([att_value_hash[att_name]])
-			#print att_name
-			#print set(val_arr[0])
+			 
 			cat_matrix = categorical(val_arr[0], drop=True, dictnames=True) ##  need to indicate dimension, its the first dimension (0), each row = 1 sample
 			cat_matrix_trans = np.transpose(cat_matrix[0]) ## transpose so that each row = 1 var   
 			for index, ori_val in  cat_matrix[1].items():
-				#print ori_val
-				#print cat_matrix_trans[index]
+				 
 				new_att_name = att_name+"-"+ori_val
 				norm_value_hash[new_att_name] = cat_matrix_trans[index]
 				newname_arr.append(new_att_name)
@@ -207,27 +202,21 @@ def normalize(att_value_hash, boolean_arr_list, integer_arr_list, ignore_arr_lis
 	
 	imp = Imputer(missing_values='NaN', strategy='mean', axis=1)			
  	b = norm_value_hash[select_features[0]][0]
-	#print b 
-	imp.fit(b)
+ 	imp.fit(b)
 	b = imp.transform(b)
 	data = np.array(b )
-	 
+	  
  	for newname in newname_arr:
-		#print newname
-		#print data.shape 
+		 
 		if newname == select_features[0]: continue
 		if newname not in newcatname_arr:
 			
 			b = norm_value_hash[newname][0]
-			#print b 
-			imp.fit(b)
+ 			imp.fit(b)
 			b = imp.transform(b)
-  			#print b
- 			#print b.shape
-			data = np.concatenate((data, b  ), axis=0)
+ 			data = np.concatenate((data, b  ), axis=0)
 		else:
 			b = np.array([norm_value_hash[newname]])
- 			#print b.shape
-			data = np.concatenate((data,  b), axis=0)
+ 			data = np.concatenate((data,  b), axis=0)
 	
 	return data, newname_arr, newcatname_arr, minmax_hash

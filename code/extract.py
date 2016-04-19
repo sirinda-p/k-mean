@@ -8,7 +8,8 @@ def isEnglish(s):
 		return True
 	except:
  		return False
-        
+ 		
+### Step 0        
 def checkFile(datapath, original_filename, max_num_att ):
 		
 	new_filename =original_filename.replace(".csv","_checked.csv")
@@ -39,9 +40,7 @@ def checkFile(datapath, original_filename, max_num_att ):
 				for i in range(0, 19):
 					row.append(arr[i]) 
 					
-				## skip attribute #19(19 in arr) 
-				 
-				for i in range(20, num_att+1):
+ 				for i in range(20, num_att+1):
 					row.append(arr[i]) 
 				row = str(row).strip("[").strip("]").replace(" '","").replace("'","")
 				f_w.write(row)
@@ -60,7 +59,7 @@ def checkFile(datapath, original_filename, max_num_att ):
 	
 	return  new_filename
 
-
+## split a dotted number by dot and return a whole integer number  
 def threedotnumber(dotted_number, need2num=False):
 	dotted_number = dotted_number.split(".")
 	if len(dotted_number ) == 2: #1.3 
@@ -74,7 +73,8 @@ def threedotnumber(dotted_number, need2num=False):
 		print "Incorrect format" 
 	
 	return number
-					
+			
+
 def transformFeature():
  	
  	machine = "aws"
