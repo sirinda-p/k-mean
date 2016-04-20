@@ -11,7 +11,7 @@ def cobweb(data, attname_arr):
 
 	tree = Cobweb3Tree()
 	cobweb_data = []
-	for row in data:
+	for row in data: 
 		 
 		cobweb_data.append({att_name: att_val for att_val, att_name in zip(row, attname_arr) })
 			

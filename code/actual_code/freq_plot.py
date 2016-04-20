@@ -3,27 +3,27 @@ import pylab as pl
 import matplotlib.pyplot as plt
 import numpy as np
 
+## This function works with data from the first run 
 def feature_stat():
 	
-	original = False
-	machine = "amm"
-	if machine == "amm":
-		prefix = "/home/amm/Desktop/sna-project/sna-git/"
-	else:
-		prefix = "/home/ubuntu/Desktop/sna_utcc/"
+	prefix = "/home/ubuntu/Desktop/sna_utcc/"
 	
 	path = prefix+"/upwork/data/"
+	## Data file to extract stat of features
 	f_r = open(path+"appt_dump_transformed_continent.csv", "r")
+	## Plot folder
 	plotpath = prefix+"/upwork/results/plot/"
 	
-	if original:
+	if original: ## the original app_dump file
 		f_r = open(path+"appt_dump_rewritten.csv", "r")
  		att_name = ["ID", "AllowAccessPush","AdOptedIn","NumCampaignMatch","Carrier","AppVersion","StartDate","AllowiBeacon",
 	"AllowGeo","AllowFeaturePush","ScreenHeight","AllowBT","HaveUniqueGlobalID","NumCrash","DailyUsage","IP","LastUpdateDate",
 	"mode-ignore","DeviceModel","BlockPush","OS","OSVersion","RevokePush","SignIn","smart-ignore",
 	"Uninstalled","ScreenWidth","EmailExist","EmailAddress","InstallDays","PushCount","Timezone","sdk","UserType","Questions",
 	"CorrectQuestion"]
-	else:
+	
+	else: ## a processed file obtained from calling checkFile() and transformFeature() in extractUtil.py
+		
 		f_r = open(path+"appt_dump_transformed_continent.csv", "r")	
 		att_name = ['ID', 'AllowPush', 'AdOptedIn', 'NumCampaignMatch', 'Carrier', 'AppVersion', 
 	'AllowiBeacon', 'AllowGeo', 'AllowFeaturePush', 'ScreenHeight', 'AllowBT', 'HaveUniqueGlobalID', 
@@ -32,6 +32,7 @@ def feature_stat():
 	'UninstalledTF', 'UninstalledSameday', 'UninstalledAfter', 'ScreenWidth', 'EmailExist', 'EmailAddress', 
 	'InstallDays', 'PushCount', 'Timezone', 'UserType', 'Questions', 'CorrectQuestion']
 	
+ 
 	## Boolean feature list
 	boolean_arr_list = ["AllowPush", "AdOptedIn", "AllowiBeacon","AllowGeo","AllowFeaturePush","AllowBT",
 	"HaveUniqueGlobalID","SignIn","EmailExist","EmailAddress","BlockPushTF", "RevokePushTF",
@@ -40,9 +41,11 @@ def feature_stat():
 	## Categorical feature list
 	category_arr_list = ["AppVersion", "DeviceModel","OS","UserType", "OSVersion","Timezone","ScreenWidth","ScreenHeight","Country" ] 
  	
+ 	## Integer feature list
 	integer_arr_list = ["NumCampaignMatch","NumCrash","DailyUsage","InstallDays",
 	"PushCount","Questions","CorrectQuestion", "BlockPushAfterDays", "RevokePushAfterDays", "UninstalledAfter", "LastUpdateDays"]
 	
+ 	## Low variance features
 	Uni_arr_list = ["AdOptedIn", "AllowiBeacon","HaveUniqueGlobalID","OS","SignIn","EmailExist","UserType"]
 
 
@@ -63,32 +66,25 @@ def feature_stat():
 			else:
 				data[i].append(arr[i]) 
 			 
-	
-	'''
-	for i, arr in data.items():
+ 	for i, arr in data.items():
 		if i==0: continue		
 		print "\n"+str(i)+": "+ att_name[i]
 		att_freqs = collections.OrderedDict(sorted(collections.Counter(data[i]).items()))
-		if  att_name[i] in boolean_arr_list:  # pie - T/F
+		if  att_name[i] in boolean_arr_list:  # T/F features - make pie  chart
 			 
 			isbool = True
 			makePie(att_freqs,  att_name[i], isbool, plotpath)
 		elif att_name[i] in category_arr_list+integer_arr_list+Uni_arr_list:
 			isbool = False
 		 
-			if len(att_freqs.keys())>5: ## make bar chart
+			if len(att_freqs.keys())>5: ## make bar chart if there are many values 
 				makeBar(att_freqs,  att_name[i], plotpath)
-			else:
-				 
-				makePie(att_freqs,  att_name[i], isbool, plotpath)
+			else: ## make pie chart if there are a few values 
+ 				makePie(att_freqs,  att_name[i], isbool, plotpath)
 		 
 		else:
 			 print att_name[i] +" not in arr list"
- '''
-	att_freqs = dict()
-	att_freqs["BeforeFirstUse"] = 535
-	att_freqs["SameDayFirstUse"] = 51
-	att_freqs["AfterFirstUse"] = 44
+
 	makePie(att_freqs, "RevokePushStat", False, plotpath)
 	f_r.close()
  

@@ -25,7 +25,7 @@ def checkNormData():
 		 
 		print att_name[1:10]
 		print new_att_name[1:9]
-		
+		 
 		print arr1[1:10]
 		print arr2[1:9]
 		print ("\n")

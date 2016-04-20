@@ -237,7 +237,7 @@ def dbscan(data):
 	algorithm_arr = ["auto", "ball_tree", "kd_tree", "brute"]
 	metric_arr = ["cityblock", "cosine", "euclidean", "l1", "l2", "manhattan"]
 	for algorithm in algorithm_arr:
-		for metric in metric_arr:
+		for metric in metric_arr: 
  			clusterer = skcluster.DBSCAN(eps=0.5,  metric=metric, algorithm=algorithm ) 
 			try:
 				clusterer.fit(data)

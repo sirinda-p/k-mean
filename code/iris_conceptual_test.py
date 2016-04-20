@@ -15,7 +15,7 @@ def cobweb():
 	tree.fit(irises_no_class)
 	
 	print len(irises )
-	print "nodes in tree"
+	print "nodes in tree" 
 	i = 0
 	
 	rootnode = tree.root 

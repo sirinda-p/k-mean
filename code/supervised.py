@@ -9,18 +9,18 @@ import classifyUtil as myclassifier
 
 def main():
 	
-	machine = "aws"
-	if machine == "amm":
-		prefix = "/home/amm/Desktop/sna-project/sna-git/upwork/"
-	else:
-		prefix = "/home/ubuntu/Desktop/sna_utcc/upwork/"
-		
-	fname_arr = ["active.csv","churn.csv" ]
-	#fname_arr = ["active_paid.csv","active_free.csv","churn_free.csv","churn_paid.csv"]
-	#fname_arr = ["paid.csv","free.csv","churn.csv","active.csv"]
+	prefix = "/home/ubuntu/Desktop/sna_utcc/upwork/"
+	
+	## Two datasets to build a classification
+	fname_arr = ["active.csv","churn.csv" ] 
+	## Possible datasets are ("active_paid.csv","active_free.csv","churn_free.csv","churn_paid.csv" ) 
+	## and ("paid.csv","free.csv","churn.csv","active.csv")
+	 
 	datapath = prefix+"data/"
 	plotpath =  prefix+"results/plot/"
+	
 	'''	
+	note to self: #customers in each dataset
 	active_paid.csv:96
 	active_free.csv:375
 	churn_free.csv:851
@@ -56,15 +56,11 @@ def main():
    	for fname0, fname1 in zip(fname0_arr, fname1_arr):
 		print fname0+"-"+fname1
 		XData, YData, newfeature_arr  = futil.makeXYforClassifier_combinedData(datapath, [fname0, fname1], ncomp, kpca)
-		#print "svm"
-		#print  len(newfeature_arr )
-		#myclassifier.svm(XData, YData, newfeature_arr)
 		 
-		print "logistic"
+		print "logistic" 
+		## Available classifications in myclassifier: logistic, svm, 
 		myclassifier.logistic(XData, YData, newfeature_arr)
-		
-		## Build a classification tree using features from logistic regression
-		
+				
 				
 main()
 	

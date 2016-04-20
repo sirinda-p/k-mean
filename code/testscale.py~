@@ -35,6 +35,6 @@ def testScale():
 	kmeans.fit(data) 
 	labels = kmeans.labels_
 	centroids = kmeans.cluster_centers_
- 	 ''' 
+ 	 '''
 	
 testScale()

@@ -7,6 +7,7 @@ import numpy as np
 import operator
 
 def logistic_plot():
+	
 	## Build a logistic regression 
   	logit = linmodel.LogisticRegression()
 	logit.fit(XData, YData)
@@ -34,6 +35,7 @@ def logistic_plot():
 		print neg_tuple
  
 def logistic(X, Y, att_name_arr):
+	
 	## Build a logistic regression 
 	param_grid = {'penalty':['l2', 'l1'],'C': [0.1, 1, 10, 100, 1000]},
   	logit =  linear_model.LogisticRegression()
@@ -42,6 +44,8 @@ def logistic(X, Y, att_name_arr):
 	estimator.fit(X, Y)
 	best_estimator = estimator.best_estimator_
 	acc_score = best_estimator.score(X,Y)
+	
+	## Get parameters
 	coef_arr = best_estimator.coef_[0]
 	print "Prediction accuracy = "+str(acc_score)
 	printCoef(coef_arr, att_name_arr)

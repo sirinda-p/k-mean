@@ -108,7 +108,7 @@ def normalize():
   	topk_arr = np.abs(pca.components_[0]).argsort()[::-1][:k]
 	select_features = list(set([att_name_list[i] for i in topk_arr]).difference(set(ignore_arr_list)))
 	
-	
+	 
 	## normalize feature values
 	#norm_value_hash["ID"] = np.array([att_value_hash["ID"]]) 
 	 
@@ -118,7 +118,7 @@ def normalize():
 		if att_name in select_features:
 			norm_value_hash[att_name] = np.array([att_value_hash[att_name]])
 			newname_arr.append(att_name)
-		
+		 
 	## normalize interger attributes 
 	minmax_hash = dict()
 	for att_name in integer_arr_list:

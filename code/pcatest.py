@@ -10,3 +10,4 @@ pca.fit(X)
 print pca.components_.shape
 #print pca.transform(X)
  
+ 

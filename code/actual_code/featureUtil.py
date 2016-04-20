@@ -205,7 +205,7 @@ def normalize(att_value_hash, boolean_arr_list, integer_arr_list, ignore_arr_lis
  	imp.fit(b)
 	b = imp.transform(b)
 	data = np.array(b )
-	  
+	   
  	for newname in newname_arr:
 		 
 		if newname == select_features[0]: continue
