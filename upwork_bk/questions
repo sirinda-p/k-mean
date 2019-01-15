@@ -1,6 +1,4 @@
-Hi David
 
-I have some questions as follows:
 1. What is # age in days of App launch from App installation INTEGER? 
 Is it (the latest date that a user use the app) - (the installaion date)? 
 
